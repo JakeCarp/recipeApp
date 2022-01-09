@@ -36,5 +36,6 @@ CREATE TABLE IF NOT EXISTS ingredients(
   name TEXT NOT NULL,
   amount TEXT NOT NULL COMMENT 'string value representing the amount of an ingredient needed',
   recipeId INT NOT NULL COMMENT 'Id of the recipe',
+  creatorId VARCHAR(255) NOT NULL,
   FOREIGN KEY (recipeId) REFERENCES recipes(id) ON DELETE CASCADE
 ) default charset utf8;

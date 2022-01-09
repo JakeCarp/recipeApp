@@ -31,10 +31,10 @@ namespace recipeApp.Services
             }
             return step;
         }
-        internal Step CreateStep(string userId, Step newStep)
+        internal Step CreateStep(Step newStep)
         {
             Recipe recipe = _rs.GetRecipeById(newStep.RecipeId);
-            if (recipe.CreatorId != userId)
+            if (recipe.CreatorId != newStep.CreatorId)
             {
                 throw new Exception("You cannot add steps to a recipe you do not own!");
             }

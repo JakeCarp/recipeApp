@@ -15,10 +15,14 @@ namespace recipeApp.Controllers
         private readonly RecipesService _rs;
         private readonly StepsService _ss;
 
-        public RecipesController(RecipesService rs, StepsService ss)
+        private readonly IngredientsService _is;
+
+
+        public RecipesController(RecipesService rs, StepsService ss, IngredientsService ins)
         {
             _rs = rs;
             _ss = ss;
+            _is = ins;
         }
 
         [HttpGet]
@@ -65,6 +69,22 @@ namespace recipeApp.Controllers
             }
         }
 
+        //GET Ingredients BY RECIPE ID
+        [HttpGet("{id}/ingredients")]
+
+        public ActionResult<List<Ingredient>> GetIngredientsByRecipeId(int id)
+        {
+            try
+            {
+                List<Ingredient> ingredients = _is.GetIngredientsByRecipeId(id);
+                return Ok(ingredients);
+            }
+            catch (System.Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
         //CREATE STEP ON RECIPE
         [HttpPost("{id}/steps")]
         [Authorize]
@@ -76,8 +96,26 @@ namespace recipeApp.Controllers
                 var userInfo = await HttpContext.GetUserInfoAsync<Account>();
                 newStep.RecipeId = id;
                 newStep.CreatorId = userInfo.Id;
-                Step step = _ss.CreateStep(userInfo.Id, newStep);
+                Step step = _ss.CreateStep(newStep);
                 return Ok(step);
+            }
+            catch (System.Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        //CREATE Ingredient on Recipe
+        [HttpPost("{id}/ingredients")]
+        public async Task<ActionResult<Ingredient>> CreateIngredient([FromBody] Ingredient newIngredient, int id)
+        {
+            try
+            {
+                var userInfo = await HttpContext.GetUserInfoAsync<Account>();
+                newIngredient.CreatorId = userInfo.Id;
+                newIngredient.RecipeId = id;
+                Ingredient ingredient = _is.CreateIngredient(newIngredient);
+                return Ok(ingredient);
             }
             catch (System.Exception e)
             {

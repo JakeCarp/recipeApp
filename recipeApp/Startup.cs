@@ -37,11 +37,13 @@ namespace recipeApp
             services.AddScoped<AccountService>();
             services.AddTransient<RecipesService>();
             services.AddTransient<StepsService>();
+            services.AddTransient<IngredientsService>();
 
             //Configure Transient Repostitories Here
             services.AddScoped<AccountsRepository>();
             services.AddTransient<RecipesRepository>();
             services.AddTransient<StepsRepository>();
+            services.AddTransient<IngredientsRepository>();
         }
 
         private void ConfigureCors(IServiceCollection services)
