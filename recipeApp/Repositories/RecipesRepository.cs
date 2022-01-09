@@ -42,22 +42,22 @@ namespace recipeApp.Repositories
                 a.*
             FROM recipes r
             JOIN accounts a ON r.creatorId = a.id
-            WHERE id = @id;";
+            WHERE r.id = @id;";
 
             //Use Dapper ORM to execute SQL then populate the creator
             return _db.Query<Recipe, Account, Recipe>(sql, (r, a) =>
             {
                 r.Creator = a;
                 return r;
-            }).FirstOrDefault();
+            }, new { id }).FirstOrDefault();
         }
 
 
         internal Recipe CreateRecipe(Recipe newRecipe)
         {
             var sql = @"
-            INSERT INTO recipes(title, description)
-            VALUES(@Title, @Description);
+            INSERT INTO recipes(title, description, creatorId)
+            VALUES(@Title, @Description, @CreatorId);
             SELECT LAST_INSERT_ID();";
             var id = _db.ExecuteScalar<int>(sql, newRecipe);
             newRecipe.Id = id;
@@ -68,9 +68,10 @@ namespace recipeApp.Repositories
             var sql = @"
             UPDATE recipes
                 SET
-                title = @Title
+                title = @Title,
                 description = @Description
-            WHERE id = @Id LIMIT 1;";
+            WHERE id = @id LIMIT 1
+            ;";
             var rowsAffected = _db.Execute(sql, recipe);
             if (rowsAffected > 1)
             {

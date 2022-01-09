@@ -74,8 +74,13 @@ namespace recipeApp.Controllers
         {
             try
             {
+                //Assign update object the target recipes Id
+                update.Id = id;
+
                 //Get user info to determine elegiblity to edit 
                 var userInfo = await HttpContext.GetUserInfoAsync<Account>();
+
+
                 //Actual determination of access should be done on the service layer
                 Recipe recipe = _rs.EditRecipe(userInfo.Id, update);
                 return Ok(recipe);
