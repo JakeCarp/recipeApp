@@ -24,8 +24,10 @@ CREATE TABLE IF NOT EXISTS steps(
   updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Last Update',
   stepOrder INT NOT NULL COMMENT 'Used to order the steps in the recipe',
   description TEXT NOT NULL,
-  recipeId INT NOT NULL COMMENT 'Id of the recipe',
-  FOREIGN KEY (recipeId) REFERENCES recipes(id) ON DELETE CASCADE
+  recipeId int NOT NULL COMMENT 'Id of the recipe',
+  creatorId VARCHAR(255) not null,
+  FOREIGN KEY (recipeId) REFERENCES recipes(id) ON DELETE CASCADE,
+  FOREIGN KEY (creatorId) REFERENCES accounts(id) ON DELETE CASCADE
 ) default charset utf8;
 CREATE TABLE IF NOT EXISTS ingredients(
   id INT AUTO_INCREMENT NOT NULL PRIMARY KEY COMMENT 'primary key',

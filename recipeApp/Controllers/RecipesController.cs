@@ -13,10 +13,12 @@ namespace recipeApp.Controllers
     public class RecipesController : ControllerBase
     {
         private readonly RecipesService _rs;
+        private readonly StepsService _ss;
 
-        public RecipesController(RecipesService rs)
+        public RecipesController(RecipesService rs, StepsService ss)
         {
             _rs = rs;
+            _ss = ss;
         }
 
         [HttpGet]
@@ -40,6 +42,42 @@ namespace recipeApp.Controllers
             {
                 Recipe recipe = _rs.GetRecipeById(id);
                 return Ok(recipe);
+            }
+            catch (System.Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        //GET STEPS BY RECIPE ID
+        [HttpGet("{id}/steps")]
+        public ActionResult<List<Step>> GetStepsByRecpieId(int id)
+        {
+            try
+            {
+                List<Step> steps = _ss.GetStepsByRecipeId(id);
+                return Ok(steps);
+
+            }
+            catch (System.Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        //CREATE STEP ON RECIPE
+        [HttpPost("{id}/steps")]
+        [Authorize]
+        public async Task<ActionResult<Step>> CreateStep([FromBody] Step newStep, int id)
+        {
+            try
+            {
+
+                var userInfo = await HttpContext.GetUserInfoAsync<Account>();
+                newStep.RecipeId = id;
+                newStep.CreatorId = userInfo.Id;
+                Step step = _ss.CreateStep(userInfo.Id, newStep);
+                return Ok(step);
             }
             catch (System.Exception e)
             {

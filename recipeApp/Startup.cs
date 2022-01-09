@@ -36,10 +36,12 @@ namespace recipeApp
             //Configure Transient Services Here
             services.AddScoped<AccountService>();
             services.AddTransient<RecipesService>();
+            services.AddTransient<StepsService>();
 
             //Configure Transient Repostitories Here
             services.AddScoped<AccountsRepository>();
             services.AddTransient<RecipesRepository>();
+            services.AddTransient<StepsRepository>();
         }
 
         private void ConfigureCors(IServiceCollection services)
