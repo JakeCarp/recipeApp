@@ -1,76 +1,74 @@
 <template>
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-3">
-    <router-link class="navbar-brand d-flex" :to="{ name: 'Home' }">
-      <div class="d-flex flex-column align-items-center">
-        <img
-          alt="logo"
-          src="../assets/img/cw-logo.png"
-          height="45"
-        />
-      </div>
-    </router-link>
-    <button
-      class="navbar-toggler"
-      type="button"
-      data-bs-toggle="collapse"
-      data-bs-target="#navbarText"
-      aria-controls="navbarText"
-      aria-expanded="false"
-      aria-label="Toggle navigation"
-    >
-      <span class="navbar-toggler-icon" />
-    </button>
-    <div class="collapse navbar-collapse" id="navbarText">
-      <ul class="navbar-nav me-auto">
-        <li>
-          <router-link :to="{ name: 'About' }" class="btn text-success lighten-30 selectable text-uppercase">
-            About
-          </router-link>
-        </li>
-      </ul>
-      <span class="navbar-text">
-        <button
-          class="btn selectable text-success lighten-30 text-uppercase my-2 my-lg-0"
-          @click="login"
-          v-if="!user.isAuthenticated"
-        >
-          Login
-        </button>
-
-        <div class="dropdown my-2 my-lg-0" v-else>
-          <div
-            class="dropdown-toggle selectable"
-            data-bs-toggle="dropdown"
-            aria-expanded="false"
-            id="authDropdown"
-          >
-            <img
-              :src="user.picture"
-              alt="user photo"
-              height="40"
-              class="rounded"
-            />
-            <span class="mx-3 text-success lighten-30">{{ user.name }}</span>
+  <nav
+    class="
+      navbar navbar-expand-lg navbar-dark
+      bg-dark
+      px-3
+      border1
+      border-4
+      elevation-3
+      d-flex
+      justi
+    "
+  >
+    <div class="selectable1" aria-label="Profile">
+      <div v-show="user.isAuthenticated" class="ms-4">
+        <div class="d-flex">
+          <div class="d-flex flex-column">
+            <h5 class="me-3 mb-0 text-white text-end">
+              {{ account.name }}
+            </h5>
+            <p class="text-white me-3 mb-0 text-end">
+              {{ account.email }}
+            </p>
           </div>
-          <div
-            class="dropdown-menu p-0 list-group w-100"
-            aria-labelledby="authDropdown"
-          >
-            <router-link :to="{ name: 'Account' }">
-              <div class="list-group-item list-group-item-action hoverable">
-                Manage Account
-              </div>
-            </router-link>
-            <div
-              class="list-group-item list-group-item-action hoverable text-danger"
-              @click="logout"
-            >
-              <i class="mdi mdi-logout"></i>
-              logout
-            </div>
-          </div>
+          <img
+            :src="account.picture"
+            alt="user photo"
+            height="50"
+            width="50"
+            class="picrounded elevation-2"
+          />
         </div>
-      </span>
+      </div>
+    </div>
+    <i
+      v-if="user.isAuthenticated"
+      @click="logout"
+      class="
+        mdi-18px
+        selectable
+        border border-dark border-3
+        fs-5
+        text-white
+        p-1
+        px-2
+        pb-2
+        me-4
+      "
+      title="logout"
+      aria-describedby="logout"
+    >
+      Logout
+    </i>
+    <div v-else>
+      <i
+        v-show="!user.isAuthenticated"
+        @click="login"
+        class="
+          mdi-18px
+          selectable
+          fs-5
+          border border-dark border-3
+          p-1
+          px-2
+          pb-2
+          me-4
+          text-light
+        "
+      >
+        Login
+      </i>
     </div>
   </nav>
 </template>
@@ -79,12 +77,17 @@
 import { AuthService } from '../services/AuthService'
 import { AppState } from '../AppState'
 import { computed } from 'vue'
+import { useRouter } from "vue-router"
 export default {
   setup() {
+    const router = useRouter()
     return {
+      router,
       user: computed(() => AppState.user),
+      account: computed(() => AppState.account),
       async login() {
-        AuthService.loginWithPopup()
+        await AuthService.loginWithPopup()
+        router.push({ name: 'Home' })
       },
       async logout() {
         AuthService.logout({ returnTo: window.location.origin })
@@ -95,27 +98,4 @@ export default {
 </script>
 
 <style scoped>
-.dropdown-menu {
-  user-select: none;
-  display: block;
-  transform: scale(0);
-  transition: all 0.15s linear;
-}
-.dropdown-menu.show {
-  transform: scale(1);
-}
-.hoverable {
-  cursor: pointer;
-}
-a:hover {
-  text-decoration: none;
-}
-.nav-link{
-  text-transform: uppercase;
-}
-.navbar-nav .router-link-exact-active{
-  border-bottom: 2px solid var(--bs-success);
-  border-bottom-left-radius: 0;
-  border-bottom-right-radius: 0;
-}
 </style>

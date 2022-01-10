@@ -49,11 +49,11 @@ namespace recipeApp.Repositories
 
         internal Step EditStep(Step step)
         {
+            //Can add step order into this statement to support step re-ordering
             var sql = @"
             UPDATE steps
                 SET
                 description = @Description,
-                stepOrder = @StepOrder
             WHERE id = @id LIMIT 1;";
             var rowsAffected = _db.Execute(sql, step);
             if (rowsAffected > 1)

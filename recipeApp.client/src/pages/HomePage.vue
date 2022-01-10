@@ -1,36 +1,31 @@
 <template>
-  <div class="home flex-grow-1 d-flex flex-column align-items-center justify-content-center">
-    <div class="home-card p-5 bg-white rounded elevation-3">
-      <img src="https://bcw.blob.core.windows.net/public/img/8600856373152463" alt="CodeWorks Logo" class="rounded-circle">
-      <h1 class="my-5 bg-dark text-white p-3 rounded text-center">
-        Vue 3 Starter
-      </h1>
+  <div class="container-fluid m-4">
+    <div class="row">
+      <Recipe v-for="r in recipes" :key="r.id" :recipe="r" />
     </div>
+    <RecipeModal />
   </div>
 </template>
 
 <script>
+import { computed, onMounted } from '@vue/runtime-core'
+import { recipesService } from '../services/RecipesService'
+import { AppState } from '../AppState'
+import RecipeModal from '../components/RecipeModal.vue'
+
 export default {
-  name: 'Home'
+  components: { RecipeModal },
+  name: 'Home',
+  setup() {
+    onMounted(async () => {
+      await recipesService.GetAllRecipes()
+    })
+    return {
+      recipes: computed(() => AppState.recipes)
+    }
+  }
 }
 </script>
 
 <style scoped lang="scss">
-.home{
-  display: grid;
-  height: 80vh;
-  place-content: center;
-  text-align: center;
-  user-select: none;
-  .home-card{
-    width: 50vw;
-    > img{
-      height: 200px;
-      max-width: 200px;
-      width: 100%;
-      object-fit: contain;
-      object-position: center;
-    }
-  }
-}
 </style>
