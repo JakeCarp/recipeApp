@@ -17,6 +17,7 @@ namespace recipeApp
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+
         }
 
         public IConfiguration Configuration { get; }
@@ -111,6 +112,8 @@ namespace recipeApp
             {
                 endpoints.MapControllers();
             });
+            app.UseDefaultFiles();
+            app.UseStaticFiles();
         }
     }
 }
