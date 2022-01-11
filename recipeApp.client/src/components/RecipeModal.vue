@@ -80,12 +80,45 @@
             <h4>
               Ingredients: <span>{{ ingredients.length }}</span>
             </h4>
-            <div v-if="!editIngredients" class="text-end">
+            <div
+              v-if="!editIngredients && recipe.creatorId === account.id"
+              class="text-end"
+            >
               <i
                 class="mdi mdi-pencil selectable"
                 title="edit Ingredients"
                 @click="editIngredients = !editIngredients"
               ></i>
+            </div>
+            <div v-if="recipe.creatorId === account.id" class="">
+              <form>
+                <div class="mb-3 col-4">
+                  <label for="ingredientInput" class="form-label"
+                    >Ingredient Name</label
+                  >
+                  <input
+                    type="text"
+                    v-model="ingredientData.name"
+                    class="form-control"
+                    id="ingredientInput"
+                    placeholder="Name..."
+                  />
+                </div>
+                <div class="mb-3 col-4">
+                  <label for="ingredientAm" class="form-label"
+                    >Ingredient Amount</label
+                  >
+                  <input
+                    class="form-control"
+                    v-model="ingredientData.amount"
+                    placeholder="Amount..."
+                    id="ingredientAm"
+                  />
+                </div>
+                <button class="btn btn-success" @click="createIngredient">
+                  Create Ingredient
+                </button>
+              </form>
             </div>
             <div v-if="editIngredients" class="text-end">
               <button
@@ -123,10 +156,16 @@
                     class="form-control"
                   />
                   <button
-                    class="btn btn-success my-1"
+                    class="btn btn-success m-1"
                     @click="editIngredient(ingredients[index], i.id)"
                   >
                     Save
+                  </button>
+                  <button
+                    class="btn btn-danger m-1"
+                    @click="deleteIngredient(i.id)"
+                  >
+                    Delete
                   </button>
                 </div>
               </div>
@@ -141,19 +180,22 @@
 
 <script>
 import { computed, ref } from '@vue/reactivity'
-import Modal from './Modal.vue'
 import { AppState } from '../AppState'
 import { recipesService } from '../services/RecipesService'
 import { ingredientsService } from '../services/IngredientsService'
 import Pop from '../utils/Pop'
 import { logger } from '../utils/Logger'
+import { useRoute } from 'vue-router'
+import { Modal } from 'bootstrap'
 export default {
   setup() {
     let edit = ref(false)
-    let recipeEdit = ref({})
     let editIngredients = ref(false)
+    let ingredientData = ref({})
+
     return {
       //REGISTER REFS
+      ingredientData,
       editIngredients,
       edit,
 
@@ -181,6 +223,33 @@ export default {
         } catch (error) {
           logger.error(error)
           Pop.toast(error, 'error')
+        }
+      },
+      async createIngredient() {
+        try {
+          await ingredientsService.createIngredient(ingredientData.value, this.recipe.id)
+          Pop.toast('Created Ingredient', 'success')
+          ingredientData.value = {}
+        } catch (error) {
+          logger.error(error)
+          Pop.toast(error, 'error')
+        }
+      },
+      async deleteRecipe() {
+        try {
+          if (await Pop.confirm('Hold on!', "Are you sure you want to delete this recipe?")) {
+            await recipesService.deleteRecipe(this.recipe.id)
+            Modal.getOrCreateInstance(document.getElementById("recipe-modal")).hide()
+          }
+        } catch (error) {
+          logger.error(error)
+        }
+      },
+      async deleteIngredient(id) {
+        try {
+          await ingredientsService.deleteIngredient(id)
+        } catch (error) {
+          logger.error(error)
         }
       }
     }

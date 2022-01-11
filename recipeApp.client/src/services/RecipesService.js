@@ -28,7 +28,13 @@ class RecipesService {
     async createRecipe(recipe) {
         const res = await api.post('api/recipes', recipe)
         logger.log(res.data)
-        AppState.recipes.unshift(res.data)
+        AppState.recipes.push(res.data)
+    }
+
+    async deleteRecipe(id) {
+        const res = await api.delete('api/recipes/' + id)
+        logger.log(res.data)
+        AppState.recipes = AppState.recipes.filter(f => f.id != id)
     }
 }
 export const recipesService = new RecipesService();
